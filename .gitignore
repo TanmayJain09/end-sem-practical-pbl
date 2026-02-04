@@ -1,0 +1,59 @@
+# ================================
+# Python Cache & Compiled Files
+# ================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ================================
+# Virtual Environments
+# ================================
+.env
+.venv
+env/
+venv/
+ENV/
+
+# ================================
+# Environment Variables
+# ================================
+*.env
+
+# ================================
+# IDE / Editor Files
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ================================
+# Jupyter Notebook Checkpoints
+# ================================
+.ipynb_checkpoints/
+
+# ================================
+# OS Generated Files
+# ================================
+.DS_Store
+Thumbs.db
+
+# ================================
+# Logs & Temporary Files
+# ================================
+*.log
+*.tmp
+
+# ================================
+# Build / Distribution (Not needed for PBL)
+# ================================
+build/
+dist/
+*.egg-info/
+
+# ================================
+# Testing & Coverage
+# ================================
+.pytest_cache/
+.coverage
+htmlcov/

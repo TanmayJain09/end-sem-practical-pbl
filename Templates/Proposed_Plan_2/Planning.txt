@@ -1,0 +1,16 @@
+My proposed plan a macro excel file or a automated advance excel file...
+So it would be like inside a workbook with two sheet. 
+	Sheet 1 : Lecture list
+Date	Time	Batch
+25-2-26	9:30	Both
+25-2-26	11:45	D1
+25-2-26	14:30	D2
+26-2-26	9:30	D1
+	So everytime a lecture would be there then the teacher would add there and then click a button after which the sheet 2 would be updated
+	
+	Sheet 2 : Auto Format Updation List
+	
+	The Main Heading would be same like : 
+Date	Time	Batch	PRN 	Name	Present
+
+	But just that instead of typing the internal content manually this time it would be generated automatically after clicking the button

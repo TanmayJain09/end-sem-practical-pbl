@@ -1,0 +1,6 @@
+Hardware
+	1. Tap - in
+	2. Fingerprint
+	3. CSV File Uploading
+Software
+	

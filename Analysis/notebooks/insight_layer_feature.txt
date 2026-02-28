@@ -1,0 +1,13 @@
+**1. Student Attendance Classification**
+
+Categorize students based on attendance percentage.
+
+**2. Top and Bottom Performer**
+
+**3. Attendance Distribution**
+
+Understanding spread of student attendance percentages.
+
+**4. Consistency**
+
+How many lectures has each student attended vs total lectures?

@@ -1,0 +1,30 @@
+**1. Dataset Overview**
+
+In this section, we examine:
+- Total records
+- Unique students
+- Unique lecture dates
+- Unique lecture time slots
+
+**2. Overall Attendance Analysis**
+
+We calculate:
+- Total Present
+- Total Absent
+- Overall Attendance Percentage
+
+**3. Attendance by Date**
+
+This analysis shows attendance percentage for each lecture date.
+
+**4. Attendance by Lecture Time**
+
+We analyze attendance distribution based on lecture timing.
+
+**5. Student-wise Attendance Analysis**
+
+This section identifies students with low and high attendance percentages.
+
+## 6. Batch-wise Attendance Analysis
+
+This analysis compares attendance performance across batches.

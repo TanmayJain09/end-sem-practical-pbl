@@ -1,3 +1,7 @@
+**Student Attendance Master Table**
+
+Compute attendance percentage relative to total lectures conducted for each student's batch.
+
 **1. Student Attendance Classification**
 
 Categorize students based on attendance percentage.

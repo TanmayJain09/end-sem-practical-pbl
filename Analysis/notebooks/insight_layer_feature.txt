@@ -11,3 +11,5 @@ Understanding spread of student attendance percentages.
 **4. Consistency**
 
 How many lectures has each student attended vs total lectures?
+
+**5. Risk Summary**

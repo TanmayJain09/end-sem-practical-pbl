@@ -1,0 +1,6 @@
+﻿PRN,Name,Lectures_Attended,Total_Lectures_Batch,Net_Attendance_Percentage,risk_category,performance_score
+201,Student 1,5,17,29.41176471,Critical,0
+203,Student 3,5,17,29.41176471,Critical,0
+204,Student 4,5,16,31.25,Critical,0.034722222
+206,Student 6,5,16,31.25,Critical,0.034722222
+207,Student 7,5,16,31.25,Critical,0.034722222

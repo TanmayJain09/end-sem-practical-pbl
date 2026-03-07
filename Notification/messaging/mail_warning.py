@@ -3,6 +3,8 @@ import smtplib, ssl
 from email.message import EmailMessage
 from pathlib import Path
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 import csv
 
 # ------------------------------
@@ -19,8 +21,10 @@ LOG_FILE = LOG_DIR / "message_log.csv"
 # ------------------------------
 # Email credentials
 # ------------------------------
-EMAIL_ADDRESS = "test@mail.com"
-EMAIL_PASSWORD = "password"  # Gmail App Password
+load_dotenv()
+
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 SMTP_SERVER = "smtp.gmail.com"
 PORT = 465  # SSL

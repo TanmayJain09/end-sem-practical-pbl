@@ -19,8 +19,8 @@ LOG_FILE = LOG_DIR / "message_log.csv"
 # ------------------------------
 # Email credentials
 # ------------------------------
-EMAIL_ADDRESS = "purposeschool619@gmail.com"
-EMAIL_PASSWORD = "nokgtfpcprbmuybe"  # Gmail App Password
+EMAIL_ADDRESS = "test@mail.com"
+EMAIL_PASSWORD = "password"  # Gmail App Password
 
 SMTP_SERVER = "smtp.gmail.com"
 PORT = 465  # SSL

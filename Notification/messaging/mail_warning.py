@@ -34,3 +34,28 @@ def send_email(to_email, subject, body) :
         server.login(EMAIL_ADDRESS,EMAIL_PASSWORD)
         server.send_message(msg)
         print(f"Email sent to {to_email}")
+
+#loop over critical students
+for idx, row in df.iterrows() : 
+    student_name = row["Name"]
+    attendance = round(row["Net_Attendance_Percentage"],2)
+    lectures_attended = row["Lectures_Attended"]
+    total_lectures = row["Total_Lectures_Batch"]
+    to_email = row["email"]
+
+    #draft body
+    subject = "Attendance Warning Notification"
+    body = f"""Dear {student_name},
+
+Your attendance is currently {attendance}%.
+Lectures Attended: {lectures_attended}
+Total Lectures: {total_lectures}
+
+This is a warning. Please improve your attendance immediately.
+
+Regards,
+Attendance Monitoring System
+"""
+
+    #send email
+    send_email(to_email,subject,body)    

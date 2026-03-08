@@ -36,3 +36,13 @@ def get_subjects_by_teacher(subjects_df, teacher_name):
 def get_students_by_batch(students_df, batch_name):
     """Filter students belonging to a batch"""
     return students_df[students_df["Batch"] == batch_name]    
+
+def get_students_for_lecture(students_df, lecture_batch):
+    """
+    Returns students who should attend a lecture.
+    lecture_batch: 'D1', 'D2', or 'BOTH'
+    """
+    if lecture_batch.upper() == "BOTH":
+        return students_df
+    else:
+        return students_df[students_df["Batch"] == lecture_batch]

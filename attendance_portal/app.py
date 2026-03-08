@@ -1,7 +1,8 @@
 import streamlit as st
+import pandas as pd
 from datetime import date, datetime
 from utils.validator import check_duplicate_attendance
-from utils.data_loader import load_subjects, get_subjects_by_teacher, get_all_teachers
+from utils.data_loader import load_students, load_subjects, get_subjects_by_teacher, get_all_teachers, get_students_for_lecture
 
 # --- Load subjects ---
 subjects_df = load_subjects()
@@ -56,3 +57,53 @@ if check_duplicate_attendance(subject_code, selected_batch, selected_date, selec
     generate_button = st.button("Generate Table", disabled=True)
 else:
     generate_button = st.button("Generate Table")
+
+students_df = load_students()
+
+if 'generate_button' in locals() and generate_button:
+
+    lecture_students = get_students_for_lecture(students_df, selected_batch)
+
+    st.subheader("Mark Attendance")
+
+    st.markdown(f"""
+    **Teacher:** {teacher_name}  
+    **Subject Code:** {subject_code}  
+    **Batch:** {selected_batch}  
+    **Date:** {selected_date}  
+    **Time:** {selected_time.strftime('%H:%M')}
+    """)
+
+    # ---- Initialize table only once ----
+    if "attendance_table" not in st.session_state:
+        table = lecture_students[["PRN","Name"]].copy()
+        table["Present"] = True
+        st.session_state.attendance_table = table
+
+    # ---- Buttons ----
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("Mark All Present"):
+            st.session_state.attendance_table["Present"] = True
+
+    with col2:
+        if st.button("Mark All Absent"):
+            st.session_state.attendance_table["Present"] = False
+
+    # ---- Editable Attendance Table ----
+    edited_df = st.data_editor(
+        st.session_state.attendance_table,
+        use_container_width=True,
+        num_rows="fixed"
+    )
+
+    # Save edits back to session_state
+    st.session_state.attendance_table = edited_df
+
+    st.markdown("---")
+
+    if st.button("Upload Attendance"):
+        st.success("Attendance captured successfully (CSV generation will happen in Step 8).")
+
+        st.dataframe(st.session_state.attendance_table)

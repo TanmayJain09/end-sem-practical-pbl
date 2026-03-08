@@ -1,21 +1,15 @@
-from utils.data_loader import load_students,load_subjects,get_subjects_by_teacher,get_students_by_batch
- 
-#load master data
-students_df = load_students()
-subjects_df = load_subjects()
+import streamlit as st
+from utils.data_loader import load_subjects,get_subjects_by_teacher,get_all_teachers
 
-print("All Students:")
-print(students_df.head())
+#loading subjects
+subject_df = load_subjects()
 
-print("\nAll Subjects")
-print(subjects_df)
+#---teacher selection---
+st.title("Teacher Attendance Portal")
+teacher_name = st.selectbox("Your Name : ",get_all_teachers(subject_df))
 
-# Example: Subjects for Teacher 1
-teacher_subjects = get_subjects_by_teacher(subjects_df, "Teacher 1")
-print("\nTeacher 1 Subjects:")
-print(teacher_subjects)
+#show subject for the selected teacher
+teacher_subjects_df = get_subjects_by_teacher(subject_df,teacher_name)
+subject_options = teacher_subjects_df["Subject"].tolist()
 
-# Example: Students in batch D1
-batch_students = get_students_by_batch(students_df, "D1")
-print("\nBatch D1 Students:")
-print(batch_students)
+st.write(f"You are teaching: {', '.join(subject_options)}")

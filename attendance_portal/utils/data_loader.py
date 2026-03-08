@@ -46,3 +46,7 @@ def get_students_for_lecture(students_df, lecture_batch):
         return students_df
     else:
         return students_df[students_df["Batch"] == lecture_batch]
+    
+def get_all_teachers(subjects_df) :
+    """Return a sorted list of all teachers in the system"""
+    return sorted(subjects_df["Teacher"].unique())

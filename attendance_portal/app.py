@@ -22,6 +22,8 @@ if "attendance_table" not in st.session_state:
 if "lecture_meta" not in st.session_state:
     st.session_state.lecture_meta = None
 
+if "default_time" not in st.session_state : 
+    st.session_state.default_time = datetime.now().time()
 
 # --- Title ---
 st.title("Teacher Attendance Portal")
@@ -62,14 +64,27 @@ with st.form("lecture_form"):
         selected_date = st.date_input("Select Lecture Date:", date.today())
 
     with time_col:
-        selected_time = st.time_input("Select Lecture Time:", datetime.now().time())
+        selected_time = st.time_input(
+            "Select Lecture Time:",
+            value=st.session_state.default_time
+        )
 
-    # Duplicate check
-    if check_duplicate_attendance(subject_code, selected_batch, selected_date, selected_time):
+    # ---- duplicate check ----
+    duplicate = check_duplicate_attendance(
+        subject_code,
+        selected_batch,
+        selected_date,
+        selected_time
+    )
+
+    if duplicate:
         st.warning("Attendance for this lecture already exists!")
-        generate_button = st.form_submit_button("Generate Table", disabled=True)
-    else:
-        generate_button = st.form_submit_button("Generate Table")
+
+    # ---- only ONE submit button ----
+    generate_button = st.form_submit_button(
+        "Generate Table",
+        disabled=duplicate
+    )
 
 
 # -----------------------------------

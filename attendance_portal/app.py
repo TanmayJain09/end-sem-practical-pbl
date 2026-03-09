@@ -95,7 +95,7 @@ if generate_button:
     lecture_students = get_students_for_lecture(students_df, selected_batch)
 
     table = lecture_students[["PRN", "Name"]].copy()
-    table["Present"] = True
+    table["Present"] = False
 
     st.session_state.attendance_table = table
 

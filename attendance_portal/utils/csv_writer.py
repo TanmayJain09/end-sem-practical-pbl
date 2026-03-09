@@ -1,8 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-ATTENDANCE_DIR = Path(__file__).resolve().parent.parent / "data" / "raw_attendance"
-
+ATTENDANCE_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "raw_attendance"
 def save_attendance_csv(df, lecture_meta):
 
     # Ensure dataframe type

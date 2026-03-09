@@ -1,6 +1,6 @@
 from pathlib import Path
 
-ATTENDANCE_DIR = Path(__file__).resolve().parent.parent/ "data" / "raw_attendance"
+ATTENDANCE_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "raw_attendance"
 
 def check_duplicate_attendance(subject, batch, lecture_date, lecture_time):
     """

@@ -30,14 +30,16 @@ st.markdown("---")
 # -----------------------------------
 # Lecture configuration FORM
 # -----------------------------------
+# Teacher selector OUTSIDE form
+teacher_name = st.selectbox(
+    "Your Name:",
+    get_all_teachers(subjects_df)
+)
+
+teacher_subjects_df = get_subjects_by_teacher(subjects_df, teacher_name)
+
+# Form starts here
 with st.form("lecture_form"):
-
-    teacher_name = st.selectbox(
-        "Your Name:",
-        get_all_teachers(subjects_df)
-    )
-
-    teacher_subjects_df = get_subjects_by_teacher(subjects_df, teacher_name)
 
     subject_option = st.selectbox(
         "Select Subject:",

@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date, datetime
 from utils.validator import check_duplicate_attendance
+from utils.csv_writer import save_attendance_csv
 from utils.data_loader import (
     load_students,
     load_subjects,
@@ -136,8 +137,9 @@ if st.session_state.attendance_table is not None:
     # -----------------------------------
     if st.button("Upload Attendance"):
 
-        attendance_df = st.session_state["attendance_editor"]
+        attendance_df = st.session_state.attendance_table
+        meta = st.session_state.lecture_meta
 
-        st.success("Attendance captured successfully (CSV generation will happen in Step 8).")
+        filepath = save_attendance_csv(attendance_df, meta)
 
-        st.dataframe(attendance_df)
+        st.success(f"Attendance saved successfully: {filepath}")

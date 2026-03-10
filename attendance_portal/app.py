@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import date, datetime
+
+from utils.logger import logger
 from utils.validator import check_duplicate_attendance
 from utils.csv_writer import save_attendance_csv
 from utils.data_loader import (
@@ -80,6 +82,12 @@ with st.form("lecture_form"):
     if duplicate:
         st.warning("Attendance for this lecture already exists!")
 
+        logger.warning(
+            f"DUPLICATE_ATTEMPT | Teacher={teacher_name} | "
+            f"Subject={subject_code} | Batch={selected_batch} | "
+            f"Date={selected_date} | Time={selected_time}"
+        )
+        
     # ---- only ONE submit button ----
     generate_button = st.form_submit_button(
         "Generate Table",
@@ -91,6 +99,12 @@ with st.form("lecture_form"):
 # Generate attendance table
 # -----------------------------------
 if generate_button:
+
+    logger.info(
+        f"LECTURE_GENERATED | Teacher={teacher_name} | "
+        f"Subject={subject_code} | Batch={selected_batch} | "
+        f"Date={selected_date} | Time={selected_time}"
+    )
 
     lecture_students = get_students_for_lecture(students_df, selected_batch)
 
@@ -156,5 +170,11 @@ if st.session_state.attendance_table is not None:
         meta = st.session_state.lecture_meta
 
         filepath = save_attendance_csv(attendance_df, meta)
+
+        logger.info(
+            f"LECTURE_GENERATED | Teacher={teacher_name} | "
+            f"Subject={subject_code} | Batch={selected_batch} | "
+            f"Date={selected_date} | Time={selected_time}"
+        )
 
         st.success(f"Attendance saved successfully: {filepath}")

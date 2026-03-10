@@ -1,7 +1,8 @@
 import logging
 import os
+from pathlib import Path
 
-LOG_DIR = "logs"
+LOG_DIR = Path(__file__).resolve().parent.parent.parent / "logs"
 LOG_FILE = "attendance.log"
 
 os.makedirs(LOG_DIR, exist_ok=True)

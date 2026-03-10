@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import date, datetime
 
-from utils.logger import logger
+from utils.attendance_loader import load_existing_attendance, get_attendance_filepath
+from utils.logger import logger, log_attendance_action
 from utils.validator import check_duplicate_attendance
 from utils.csv_writer import save_attendance_csv
 from utils.data_loader import (
@@ -26,6 +27,9 @@ if "lecture_meta" not in st.session_state:
 
 if "default_time" not in st.session_state : 
     st.session_state.default_time = datetime.now().time()
+
+if "attendance_mode" not in st.session_state:
+    st.session_state.attendance_mode = None
 
 # --- Title ---
 st.title("Teacher Attendance Portal")
@@ -80,19 +84,9 @@ with st.form("lecture_form"):
     )
 
     if duplicate:
-        st.warning("Attendance for this lecture already exists!")
+        st.info("Attendance for this lecture already exists. You can edit and update it.")
 
-        logger.warning(
-            f"DUPLICATE_ATTEMPT | Teacher={teacher_name} | "
-            f"Subject={subject_code} | Batch={selected_batch} | "
-            f"Date={selected_date} | Time={selected_time}"
-        )
-        
-    # ---- only ONE submit button ----
-    generate_button = st.form_submit_button(
-        "Generate Table",
-        disabled=duplicate
-    )
+    generate_button = st.form_submit_button("Generate Table")
 
 
 # -----------------------------------
@@ -100,20 +94,7 @@ with st.form("lecture_form"):
 # -----------------------------------
 if generate_button:
 
-    logger.info(
-        f"LECTURE_GENERATED | Teacher={teacher_name} | "
-        f"Subject={subject_code} | Batch={selected_batch} | "
-        f"Date={selected_date} | Time={selected_time}"
-    )
-
-    lecture_students = get_students_for_lecture(students_df, selected_batch)
-
-    table = lecture_students[["PRN", "Name"]].copy()
-    table["Present"] = False
-
-    st.session_state.attendance_table = table
-
-    st.session_state.lecture_meta = {
+    lecture_meta = {
         "teacher": teacher_name,
         "subject_code": subject_code,
         "batch": selected_batch,
@@ -121,6 +102,36 @@ if generate_button:
         "time": selected_time
     }
 
+    existing_df = load_existing_attendance(lecture_meta)
+
+    if existing_df is not None:
+
+        logger.info(
+            f"ATTENDANCE_EDIT_MODE | Teacher={teacher_name} | "
+            f"Subject={subject_code} | Batch={selected_batch} | "
+            f"Date={selected_date} | Time={selected_time}"
+        )
+
+        st.session_state.attendance_table = existing_df
+        st.session_state.attendance_mode = "edit"
+
+    else:
+
+        logger.info(
+            f"LECTURE_GENERATED | Teacher={teacher_name} | "
+            f"Subject={subject_code} | Batch={selected_batch} | "
+            f"Date={selected_date} | Time={selected_time}"
+        )
+
+        lecture_students = get_students_for_lecture(students_df, selected_batch)
+
+        table = lecture_students[["PRN", "Name"]].copy()
+        table["Present"] = False
+
+        st.session_state.attendance_table = table
+        st.session_state.attendance_mode = "new"
+
+    st.session_state.lecture_meta = lecture_meta
 
 # -----------------------------------
 # Display attendance table
@@ -152,7 +163,7 @@ if st.session_state.attendance_table is not None:
             st.session_state.attendance_table["Present"] = False
 
     # Attendance editor (IMPORTANT: widget manages its own state)
-    st.data_editor(
+    st.session_state.attendance_table = st.data_editor(
         st.session_state.attendance_table,
         use_container_width=True,
         num_rows="fixed",
@@ -164,17 +175,17 @@ if st.session_state.attendance_table is not None:
     # -----------------------------------
     # Upload attendance
     # -----------------------------------
-    if st.button("Upload Attendance"):
+    if st.button("Upload Attendance"): 
 
         attendance_df = st.session_state.attendance_table
         meta = st.session_state.lecture_meta
 
         filepath = save_attendance_csv(attendance_df, meta)
 
-        logger.info(
-            f"LECTURE_GENERATED | Teacher={teacher_name} | "
-            f"Subject={subject_code} | Batch={selected_batch} | "
-            f"Date={selected_date} | Time={selected_time}"
-        )
+        if st.session_state.attendance_mode == "new":
+            log_attendance_action("CREATE_ATTENDANCE", meta)
+
+        else:
+            log_attendance_action("UPDATE_ATTENDANCE", meta)
 
         st.success(f"Attendance saved successfully: {filepath}")

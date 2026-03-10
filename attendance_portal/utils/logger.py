@@ -25,3 +25,18 @@ file_handler.setFormatter(formatter)
 
 if not logger.handlers:
     logger.addHandler(file_handler)
+
+
+def log_attendance_action(action, meta):
+
+    subject = meta["subject_code"]
+    batch = meta["batch"]
+    date = meta["date"]
+    time = meta["time"]
+
+    message = (
+        f"{action} | Subject={subject} | Batch={batch} | "
+        f"Date={date} | Time={time}"
+    )
+
+    logger.info(message)

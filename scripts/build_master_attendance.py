@@ -32,7 +32,7 @@ def detect_changed_files(files,registry) :
     for file in files : 
         
         current_hash = compute_file_hash(file)
-        stored_hash = get_file_hash(registry,file)
+        stored_hash = get_file_hash(registry,file.name)
 
         if stored_hash is None : 
             print(f"NEW FILE : {file.name}")

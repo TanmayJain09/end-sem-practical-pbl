@@ -31,6 +31,6 @@ def parse_attendance_filename(file_path: Path) -> dict:
         "Date" : date,
         "Time" : time,
         "Subject Code" : subject_code,
-        "Batch " : batch,
-        "Source File " : file_path.name
+        "Batch" : batch,
+        "Source File" : file_path.name
     }

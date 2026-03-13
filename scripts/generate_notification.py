@@ -32,3 +32,33 @@ def classify_attendance(percentage, rules):
         return "Alert"
     else:
         return "Critical"
+    
+# ------------------------
+# Step 1: Subject-wise attendance (batch-aware)
+# ------------------------
+subject_rows = []
+
+for _, student in students_df.iterrows():
+    prn = student['PRN']
+    name = student['Name']
+    student_batch = student['Batch']
+    
+    student_attendance = master_df[(master_df['PRN'] == prn) & 
+                                   ((master_df['Batch'] == student_batch) | (master_df['Batch'] == "BOTH"))]
+    
+    for subject, group in student_attendance.groupby('Subject Code'):
+        total_classes = len(group)
+        classes_present = group['Present'].sum()
+        attendance_pct = round((classes_present / total_classes) * 100, 2) if total_classes > 0 else 0.0
+        
+        subject_rows.append({
+            "PRN": prn,
+            "Name": name,
+            "Subject Code": subject,
+            "Total Classes": total_classes,
+            "Classes Present": classes_present,
+            "Attendance %": attendance_pct
+        })
+
+subject_summary_df = pd.DataFrame(subject_rows)
+subject_summary_df.to_csv(SUBJECT_SUMMARY_FILE, index=False)

@@ -16,3 +16,6 @@ master_df = pd.read_csv(MASTER_ATT_FILE)
 students_df = pd.read_csv(STUDENT_MASTER_FILE)
 with open(RULES_FILE) as f : 
     rules = json.load(f)
+
+# Ensure Present column is boolean
+master_df['Present'] = master_df['Present'].astype(bool)

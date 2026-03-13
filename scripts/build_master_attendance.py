@@ -53,3 +53,24 @@ def load_master():
         return pd.read_csv(MASTER_FILE)
 
     return pd.DataFrame()
+
+def process_attendance(file_path) : 
+    """
+    Process a raw attendance CSV and return a dataframe
+    ready to append into master_attendance.csv
+    """
+
+    #load the csv
+    df = pd.read_csv(file_path)
+
+    #metadata from the filename
+    metadata = parse_attendance_filename(file_path)
+
+    # Add metadata columns
+    df["Date"] = metadata["Date"]
+    df["Time"] = metadata["Time"]
+    df["Subject Code"] = metadata["Subject Code"]
+    df["Batch"] = metadata["Batch"]
+    df["Source_File"] = metadata["Source_File"]
+
+    return df

@@ -5,7 +5,7 @@ from scripts.hash_utils import compute_file_hash
 from scripts.registry_manager import (
     load_registry,
     save_registry,
-    get_file_hash
+    get_stored_hash
 )
 from scripts.file_parser import parse_attendance_filename
 

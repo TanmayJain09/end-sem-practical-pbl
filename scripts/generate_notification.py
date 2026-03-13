@@ -85,3 +85,21 @@ for prn, group in subject_summary_df.groupby('PRN'):
     })
 
 notification_df = pd.DataFrame(overall_rows)
+
+# ------------------------
+# Step 3: Merge emails
+# ------------------------
+notification_df = notification_df.merge(students_df[['PRN', 'Email']], on='PRN', how='left')
+
+# ------------------------
+# Step 4: Keep only Warning / Alert / Critical
+# ------------------------
+notification_df = notification_df[notification_df['Status'] != "Safe"]
+
+# ------------------------
+# Step 5: Save notification CSV
+# ------------------------
+notification_df.to_csv(NOTIFICATION_FILE, index=False)
+
+print(f"Notification CSV saved: {NOTIFICATION_FILE}")
+print(f"Subject-wise summary CSV saved: {SUBJECT_SUMMARY_FILE}")

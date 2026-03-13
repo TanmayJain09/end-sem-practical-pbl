@@ -15,4 +15,31 @@ PROCESSED_DIR = DATA_DIR / "processed"
 MASTER_FILE = PROCESSED_DIR / "master_attendance.csv"
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
-print(RAW_ATTENDANCE_DIR)
+def get_attendance_files() :
+    """
+    Return list of all attendance CSV files.
+    """
+
+    return list(RAW_ATTENDANCE_DIR.glob("*.csv")) 
+
+def detect_changed_files(files,registry) : 
+    """
+    Detect new or modified attendance files.
+    """
+
+    changed_files=[]
+
+    for file in files : 
+        
+        current_hash = compute_file_hash(file)
+        stored_hash = get_file_hash(registry,file)
+
+        if stored_hash is None : 
+            print(f"NEW FILE : {file.name}")
+            changed_files.append((file,current_hash))
+        
+        elif stored_hash != current_hash : 
+            print(f"MODIFIED : {file.name}")
+            changed_files.append((file,current_hash))
+        
+    return changed_files

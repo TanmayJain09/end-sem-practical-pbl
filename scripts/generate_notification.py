@@ -62,3 +62,26 @@ for _, student in students_df.iterrows():
 
 subject_summary_df = pd.DataFrame(subject_rows)
 subject_summary_df.to_csv(SUBJECT_SUMMARY_FILE, index=False)
+
+# ------------------------
+# Step 2: Overall attendance (sum over all subjects)
+# ------------------------
+overall_rows = []
+
+for prn, group in subject_summary_df.groupby('PRN'):
+    name = group['Name'].iloc[0]
+    total_classes = group['Total Classes'].sum()
+    classes_present = group['Classes Present'].sum()
+    overall_pct = round((classes_present / total_classes) * 100, 2) if total_classes > 0 else 0.0
+    status = classify_attendance(overall_pct, rules)
+    
+    overall_rows.append({
+        "PRN": prn,
+        "Name": name,
+        "Total Classes": total_classes,
+        "Classes Present": classes_present,
+        "Attendance %": overall_pct,
+        "Status": status
+    })
+
+notification_df = pd.DataFrame(overall_rows)

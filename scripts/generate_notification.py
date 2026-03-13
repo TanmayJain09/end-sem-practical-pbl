@@ -19,3 +19,16 @@ with open(RULES_FILE) as f :
 
 # Ensure Present column is boolean
 master_df['Present'] = master_df['Present'].astype(bool)
+
+# ------------------------
+# Helper function to classify attendance
+# ------------------------
+def classify_attendance(percentage, rules):
+    if percentage >= rules["safe"]:
+        return "Safe"
+    elif percentage >= rules["warning"]:
+        return "Warning"
+    elif percentage >= rules["alert"]:
+        return "Alert"
+    else:
+        return "Critical"

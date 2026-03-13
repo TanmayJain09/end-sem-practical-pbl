@@ -9,5 +9,10 @@ from scripts.registry_manager import (
 )
 from scripts.file_parser import parse_attendance_filename
 
-RAW_ATTENDANCE_DIR = Path("data/raw_attendance")
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+RAW_ATTENDANCE_DIR = DATA_DIR / "raw_attendance"
+PROCESSED_DIR = DATA_DIR / "processed"
+MASTER_FILE = PROCESSED_DIR / "master_attendance.csv"
+PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+
 print(RAW_ATTENDANCE_DIR)

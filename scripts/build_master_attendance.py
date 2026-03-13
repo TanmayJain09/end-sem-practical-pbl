@@ -43,3 +43,13 @@ def detect_changed_files(files,registry) :
             changed_files.append((file,current_hash))
         
     return changed_files
+
+def load_master():
+    """
+    Load master attendance file if it exists.
+    """
+
+    if MASTER_FILE.exists():
+        return pd.read_csv(MASTER_FILE)
+
+    return pd.DataFrame()

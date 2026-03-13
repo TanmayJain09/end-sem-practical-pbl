@@ -20,7 +20,7 @@ SMTP_PORT = 587
 # File paths
 # ------------------------
 NOTIFICATION_FILE = Path(__file__).resolve().parent.parent / "data/derived/notification_status.csv"
-SUBJECT_SUMMARY_FILE = Path(__file__).resolve().parent.parent / "data/derived/subject_attendance_summary.csv"
+SUBJECT_SUMMARY_FILE = Path(__file__).resolve().parent.parent / "data" / "processed" / "subject_attendance_summary.csv"
 LOG_FILE = Path(__file__).resolve().parent.parent / "logs/email_log.csv"
 
 # Ensure logs folder exists

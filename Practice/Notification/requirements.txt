@@ -1,9 +1,0 @@
-pandas
-pathlib
-openpyxl
-numpy
-python-dotenv
-pywhatkit
-twilio
-schedule
-jupyter

@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+import plotly.express as px
 
 # --------------------------------------------------
 # Paths
@@ -14,7 +15,6 @@ OVERALL_FILE = DATA_DIR / "overall_summary.csv"
 SUBJECT_FILE = DATA_DIR / "subject_attendance.csv"
 STUDENT_FILE = DATA_DIR / "student_attendance_summary.csv"
 DAILY_FILE = DATA_DIR / "daily_attendance_trend.csv"
-
 
 # --------------------------------------------------
 # Page Config
@@ -36,58 +36,65 @@ subject_df = pd.read_csv(SUBJECT_FILE)
 student_df = pd.read_csv(STUDENT_FILE)
 daily_df = pd.read_csv(DAILY_FILE)
 
-
 # --------------------------------------------------
-# Top Metrics
+# KPI Metrics
 # --------------------------------------------------
 
-st.subheader("Overall Summary")
+st.subheader("Overall Metrics")
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric(
-    "Total Students",
-    int(overall_df["total_students"][0])
-)
+col1.metric("Total Students", int(overall_df["total_students"][0]))
+col2.metric("Total Records", int(overall_df["total_records"][0]))
+col3.metric("Total Present", int(overall_df["total_present"][0]))
+col4.metric("Attendance %", f'{overall_df["attendance_percent"][0]} %')
 
-col2.metric(
-    "Total Records",
-    int(overall_df["total_records"][0])
-)
+st.divider()
 
-col3.metric(
-    "Total Present",
-    int(overall_df["total_present"][0])
-)
+# --------------------------------------------------
+# Charts Layout
+# --------------------------------------------------
 
-col4.metric(
-    "Attendance %",
-    f'{overall_df["attendance_percent"][0]} %'
-)
-
+left, right = st.columns(2)
 
 # --------------------------------------------------
 # Daily Attendance Trend
 # --------------------------------------------------
 
-st.subheader("Daily Attendance Trend")
+with left:
 
-st.line_chart(
-    daily_df.set_index("Date")["attendance_percent"]
-)
+    st.subheader("Daily Attendance Trend")
 
+    fig = px.line(
+        daily_df,
+        x="Date",
+        y="attendance_percent",
+        markers=True,
+        title="Attendance % Over Time"
+    )
+
+    st.plotly_chart(fig,use_container_width=True)
 
 # --------------------------------------------------
 # Subject Attendance
 # --------------------------------------------------
 
-st.subheader("Subject Attendance")
+with right:
 
-st.bar_chart(
-    subject_df.set_index("Subject Code")["attendance_percent"]
-)
+    st.subheader("Subject Attendance")
 
+    fig = px.bar(
+        subject_df,
+        x="Subject Code",
+        y="attendance_percent",
+        color="attendance_percent",
+        title="Attendance % by Subject"
+    )
 
+    st.plotly_chart(fig, use_container_width=True)
+
+st.divider()
+    
 # --------------------------------------------------
 # Low Attendance Students
 # --------------------------------------------------
@@ -98,11 +105,12 @@ low_attendance = student_df[
     student_df["attendance_percent"] < 75
 ]
 
-st.dataframe(low_attendance)
+st.dataframe(low_attendance, use_container_width=True)
 
+st.divider()
 
 # --------------------------------------------------
-# Download Student Report
+# Download Report
 # --------------------------------------------------
 
 st.subheader("Download Student Attendance Report")

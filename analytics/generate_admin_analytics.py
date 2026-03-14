@@ -78,6 +78,29 @@ def generate_subject_attendance(df):
     print(f"Generated: {output_file}")
 
 # ---------------------------------------------------
+# Generate Student Summary
+# ---------------------------------------------------
+
+def generate_student_summary(df):
+
+    student_df = df.groupby(["PRN", "Name"]).agg(
+        total_classes=("Present", "count"),
+        total_present=("Present", "sum")
+    ).reset_index()
+
+    student_df["total_absent"] = student_df["total_classes"] - student_df["total_present"]
+
+    student_df["attendance_percent"] = (
+        student_df["total_present"] / student_df["total_classes"] * 100
+    ).round(2)
+
+    output_file = OUTPUT_DIR / "student_attendance_summary.csv"
+
+    student_df.to_csv(output_file, index=False)
+
+    print(f"Generated: {output_file}")
+
+# ---------------------------------------------------
 # Main Pipeline
 # ---------------------------------------------------
 
@@ -92,6 +115,8 @@ def main():
     generate_overall_summary(df)
 
     generate_subject_attendance(df)
+
+    generate_student_summary(df)
 
     print("Admin analytics generation complete.")
 

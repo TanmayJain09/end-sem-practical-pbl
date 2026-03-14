@@ -1,51 +1,38 @@
 import streamlit as st
 import subprocess
 import sys
+from pathlib import Path
 
-st.set_page_config(
-    page_title="Attendance System Login",
-    layout="centered"
-)
+BASE_DIR = Path(__file__).resolve().parent
 
-st.title("Attendance Management System")
+st.set_page_config(page_title="Attendance System", layout="centered")
 
-st.subheader("Login")
-
-# -----------------------------
-# Role Selection
-# -----------------------------
+st.title("Attendance Analytics Portal")
+st.write("Select a role to open the dashboard")
 
 role = st.selectbox(
-    "Select Role",
+    "Choose Role",
     ["Admin", "Teacher", "Student"]
 )
 
-username = st.text_input("Username")
-password = st.text_input("Password", type="password")
-
-# -----------------------------
-# Login Button
-# -----------------------------
-
-if st.button("Login"):
+if st.button("Open Dashboard"):
 
     if role == "Admin":
-        st.success("Opening Admin Dashboard...")
-
-        subprocess.Popen(
-            ["streamlit", "run", "dashboards/admin_dashboard.py"]
-        )
+        subprocess.Popen([
+            sys.executable, "-m", "streamlit", "run",
+            str(BASE_DIR / "admin_dashboard.py")
+        ])
 
     elif role == "Teacher":
-        st.success("Opening Teacher Dashboard...")
-
-        subprocess.Popen(
-            ["streamlit", "run", "dashboards/teacher_dashboard.py"]
-        )
+        subprocess.Popen([
+            sys.executable, "-m", "streamlit", "run",
+            str(BASE_DIR / "teacher_dashboard.py")
+        ])
 
     elif role == "Student":
-        st.success("Opening Student Dashboard...")
+        subprocess.Popen([
+            sys.executable, "-m", "streamlit", "run",
+            str(BASE_DIR / "student_dashboard.py")
+        ])
 
-        subprocess.Popen(
-            ["streamlit", "run", "dashboards/student_dashboard.py"]
-        )
+    st.success("Dashboard launched in a new tab.")

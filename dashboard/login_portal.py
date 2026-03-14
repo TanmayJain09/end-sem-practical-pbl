@@ -1,52 +1,51 @@
 import streamlit as st
 import subprocess
 import sys
-from pathlib import Path
-
-# --------------------------------------------------
-# Page Config
-# --------------------------------------------------
 
 st.set_page_config(
     page_title="Attendance System Login",
     layout="centered"
 )
 
-st.title("Attendance Monitoring System")
+st.title("Attendance Management System")
 
-st.write("Select Login Type")
+st.subheader("Login")
 
-# --------------------------------------------------
-# Login Selection
-# --------------------------------------------------
+# -----------------------------
+# Role Selection
+# -----------------------------
 
-login_type = st.selectbox(
-    "Login As",
+role = st.selectbox(
+    "Select Role",
     ["Admin", "Teacher", "Student"]
 )
 
-# --------------------------------------------------
+username = st.text_input("Username")
+password = st.text_input("Password", type="password")
+
+# -----------------------------
 # Login Button
-# --------------------------------------------------
+# -----------------------------
 
-if st.button("Enter Dashboard"):
+if st.button("Login"):
 
-    base_dir = Path(__file__).resolve().parent
-
-    if login_type == "Admin":
-
-        dashboard_path = base_dir / "admin_dashboard.py"
-
-        subprocess.Popen(
-            ["streamlit", "run", str(dashboard_path)]
-        )
-
+    if role == "Admin":
         st.success("Opening Admin Dashboard...")
 
-    elif login_type == "Teacher":
+        subprocess.Popen(
+            ["streamlit", "run", "dashboards/admin_dashboard.py"]
+        )
 
-        st.warning("Teacher dashboard not implemented yet.")
+    elif role == "Teacher":
+        st.success("Opening Teacher Dashboard...")
 
-    elif login_type == "Student":
+        subprocess.Popen(
+            ["streamlit", "run", "dashboards/teacher_dashboard.py"]
+        )
 
-        st.warning("Student dashboard not implemented yet.")
+    elif role == "Student":
+        st.success("Opening Student Dashboard...")
+
+        subprocess.Popen(
+            ["streamlit", "run", "dashboards/student_dashboard.py"]
+        )

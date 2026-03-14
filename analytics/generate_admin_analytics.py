@@ -54,6 +54,28 @@ def generate_overall_summary(df):
 
     print(f"Generated: {output_file}")
 
+# ---------------------------------------------------
+# Generate Subject Attendance
+# ---------------------------------------------------
+
+def generate_subject_attendance(df):
+
+    subject_df = df.groupby("Subject Code").agg(
+        total_records=("Present", "count"),
+        total_present=("Present", "sum")
+    ).reset_index()
+
+    subject_df["total_absent"] = subject_df["total_records"] - subject_df["total_present"]
+
+    subject_df["attendance_percent"] = (
+        subject_df["total_present"] / subject_df["total_records"] * 100
+    ).round(2)
+
+    output_file = OUTPUT_DIR / "subject_attendance.csv"
+
+    subject_df.to_csv(output_file, index=False)
+
+    print(f"Generated: {output_file}")
 
 # ---------------------------------------------------
 # Main Pipeline
@@ -69,8 +91,9 @@ def main():
 
     generate_overall_summary(df)
 
-    print("Admin analytics generation complete.")
+    generate_subject_attendance(df)
 
+    print("Admin analytics generation complete.")
 
 if __name__ == "__main__":
     main()

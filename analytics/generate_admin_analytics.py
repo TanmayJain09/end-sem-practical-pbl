@@ -101,6 +101,27 @@ def generate_student_summary(df):
     print(f"Generated: {output_file}")
 
 # ---------------------------------------------------
+# Generate Daily Trend
+# ---------------------------------------------------
+
+def generate_daily_trend(df):
+
+    daily_df = df.groupby("Date").agg(
+        total_records=("Present", "count"),
+        total_present=("Present", "sum")
+    ).reset_index()
+
+    daily_df["attendance_percent"] = (
+        daily_df["total_present"] / daily_df["total_records"] * 100
+    ).round(2)
+
+    output_file = OUTPUT_DIR / "daily_attendance_trend.csv"
+
+    daily_df.to_csv(output_file, index=False)
+
+    print(f"Generated: {output_file}")
+
+# ---------------------------------------------------
 # Main Pipeline
 # ---------------------------------------------------
 
@@ -117,6 +138,8 @@ def main():
     generate_subject_attendance(df)
 
     generate_student_summary(df)
+
+    generate_daily_trend(df)
 
     print("Admin analytics generation complete.")
 

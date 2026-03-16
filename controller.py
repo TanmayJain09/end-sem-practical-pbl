@@ -15,6 +15,7 @@ LOGIN_PORTAL = DASHBOARD_DIR / "login_portal.py"
 
 BUILD_MASTER = SCRIPTS_DIR / "build_master_attendance.py"
 GENERATE_NOTIFICATION = SCRIPTS_DIR / "generate_notification.py"
+MAIL_WARNING = SCRIPTS_DIR / "mail_warning.py"
 
 ADMIN_ANALYTICS = ANALYTICS_DIR / "generate_admin_analytics.py"
 TEACHER_ANALYTICS = ANALYTICS_DIR / "generate_teacher_analytics.py"
@@ -54,6 +55,7 @@ def build_master_attendance():
 def generate_notifications():
     try:
         run_python_script(GENERATE_NOTIFICATION)
+        run_python_script(MAIL_WARNING)
         messagebox.showinfo("Success", "Notifications generated and emails sent.")
     except Exception as e:
         messagebox.showerror("Error", str(e))

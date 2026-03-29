@@ -22,9 +22,11 @@ TEACHER_ANALYTICS = ANALYTICS_DIR / "generate_teacher_analytics.py"
 
 
 def run_python_script(script_path):
-    """Run a Python script and handle errors."""
+    module_path = script_path.with_suffix("").relative_to(PROJECT_ROOT)
+    module_name = ".".join(module_path.parts)
+
     result = subprocess.run(
-        [sys.executable, str(script_path)],
+        [sys.executable, "-m", module_name],
         capture_output=True,
         text=True
     )

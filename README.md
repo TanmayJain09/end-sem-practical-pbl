@@ -22,10 +22,7 @@ This project aims to automate student data analysis and risk assessment using lo
 
 ## Technologies Used
 - **Programming Language:** Python  
-- **Data Handling:** CSV / File Handling / Pandas  
-- **Analysis Techniques:** Conditional Logic, Statistical Analysis  
-- **Tools:** VS Code / PyCharm / Jupyter Notebook  
-- **Operating System:** Windows / Linux  
+- **Data Handling:** CSV / Hash Tracking System / Pandas  
 
 *(Technologies may vary based on implementation)*
 

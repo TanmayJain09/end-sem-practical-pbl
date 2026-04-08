@@ -1,7 +1,13 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 from pathlib import Path
+from scripts.pdf_generator import generate_student_pdf
 
 # --------------------------------------------------
 # Paths
@@ -176,8 +182,24 @@ report = student_data[
 csv = report.to_csv(index=False)
 
 st.download_button(
-    label="Download My Attendance",
+    label="Download CSV",
     data=csv,
     file_name=f"{selected_prn}_attendance.csv",
     mime="text/csv"
+)
+
+# ---------------- PDF ----------------
+
+pdf_buffer = generate_student_pdf(
+    student_name,
+    student_data,
+    daily,
+    subject_summary
+)
+
+st.download_button(
+    label="Download PDF Report",
+    data=pdf_buffer,
+    file_name=f"{selected_prn}_attendance_report.pdf",
+    mime="application/pdf"
 )

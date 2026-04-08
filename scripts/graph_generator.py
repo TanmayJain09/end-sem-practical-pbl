@@ -70,3 +70,50 @@ def generate_batch_graph(batch_df):
 
     buffer.seek(0)
     return buffer
+
+# ------------------------------------------
+# Student Daily Trend
+# ------------------------------------------
+def generate_student_daily_graph(daily_df):
+    import matplotlib.pyplot as plt
+    from io import BytesIO
+
+    plt.figure()
+
+    plt.plot(daily_df["Date"], daily_df["attendance_percent"], marker='o')
+    plt.xticks(rotation=45)
+
+    plt.title("Attendance Trend")
+    plt.xlabel("Date")
+    plt.ylabel("Attendance %")
+
+    buffer = BytesIO()
+    plt.tight_layout()
+    plt.savefig(buffer, format="png")
+    plt.close()
+
+    buffer.seek(0)
+    return buffer
+
+
+# ------------------------------------------
+# Student Subject Graph
+# ------------------------------------------
+def generate_student_subject_graph(subject_df):
+    import matplotlib.pyplot as plt
+    from io import BytesIO
+
+    plt.figure()
+
+    plt.bar(subject_df["Subject"], subject_df["attendance_percent"])
+
+    plt.xticks(rotation=45)
+    plt.title("Subject Attendance")
+
+    buffer = BytesIO()
+    plt.tight_layout()
+    plt.savefig(buffer, format="png")
+    plt.close()
+
+    buffer.seek(0)
+    return buffer

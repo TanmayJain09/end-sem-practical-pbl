@@ -9,7 +9,9 @@ from io import BytesIO
 
 from scripts.graph_generator import (
     generate_daily_trend_graph,
-    generate_subject_graph
+    generate_subject_graph,
+    generate_teacher_daily_graph,
+    generate_batch_graph
 )
 
 def generate_admin_pdf(overall_df, subject_df, student_df, daily_df):
@@ -111,6 +113,93 @@ def generate_admin_pdf(overall_df, subject_df, student_df, daily_df):
     elements.append(Image(graph1, width=450, height=250))
     elements.append(Spacer(1, 20))
     elements.append(Image(graph2, width=450, height=250))
+
+    doc.build(elements)
+
+    buffer.seek(0)
+    return buffer
+
+def generate_teacher_pdf(selected_teacher, student_df, daily_df, batch_df):
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # ------------------------------------------
+    # Page 1 — Summary
+    # ------------------------------------------
+
+    elements.append(Paragraph(f"{selected_teacher} - Attendance Report", styles["Title"]))
+    elements.append(Spacer(1, 20))
+
+    total_students = student_df["PRN"].nunique()
+    total_classes = student_df["total_classes"].sum()
+    total_present = student_df["total_present"].sum()
+
+    attendance_percent = round(
+        (total_present / total_classes) * 100, 2
+    ) if total_classes > 0 else 0
+
+    defaulters = len(student_df[student_df["attendance_percent"] < 75])
+
+    summary_data = [
+        ["Metric", "Value"],
+        ["Total Students", total_students],
+        ["Total Classes", total_classes],
+        ["Total Present", total_present],
+        ["Attendance %", f"{attendance_percent}%"],
+        ["Defaulters (<75%)", defaulters],
+    ]
+
+    table = Table(summary_data)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+        ("GRID", (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    elements.append(table)
+    elements.append(PageBreak())
+
+    # ------------------------------------------
+    # Page 2 — Student Table
+    # ------------------------------------------
+
+    elements.append(Paragraph("Student Attendance", styles["Heading2"]))
+    elements.append(Spacer(1, 10))
+
+    table_data = [["PRN", "Name", "Classes", "Present", "%"]]
+
+    for _, row in student_df.iterrows():
+        table_data.append([
+            row["PRN"],
+            row.get("Name", ""),
+            row["total_classes"],
+            row["total_present"],
+            f'{row["attendance_percent"]}%'
+        ])
+
+    table = Table(table_data)
+    table.setStyle(TableStyle([
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+
+    elements.append(table)
+    elements.append(PageBreak())
+
+    # ------------------------------------------
+    # Page 3 — Graphs
+    # ------------------------------------------
+
+    elements.append(Paragraph("Graphs", styles["Heading2"]))
+    elements.append(Spacer(1, 10))
+
+    daily_graph = generate_teacher_daily_graph(daily_df)
+    batch_graph = generate_batch_graph(batch_df)
+
+    elements.append(Image(daily_graph, width=400, height=200))
+    elements.append(Spacer(1, 20))
+    elements.append(Image(batch_graph, width=400, height=200))
 
     doc.build(elements)
 

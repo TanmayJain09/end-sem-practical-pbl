@@ -1,7 +1,17 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 import streamlit as st
 import pandas as pd
 from pathlib import Path
 import plotly.express as px
+from scripts.pdf_generator import generate_admin_pdf
+from scripts.graph_generator import (
+    generate_daily_trend_graph,
+    generate_subject_graph
+)
 
 # --------------------------------------------------
 # Paths
@@ -115,11 +125,26 @@ st.divider()
 
 st.subheader("Download Student Attendance Report")
 
+# CSV (existing)
 csv = student_df.to_csv(index=False)
 
 st.download_button(
-    label="Download Report",
+    label="Download CSV",
     data=csv,
     file_name="student_attendance_summary.csv",
     mime="text/csv"
+)
+
+pdf_buffer = generate_admin_pdf(
+    overall_df,
+    subject_df,
+    student_df,
+    daily_df
+)
+
+st.download_button(
+    label="Download PDF Report",
+    data=pdf_buffer,
+    file_name="admin_attendance_report.pdf",
+    mime="application/pdf"
 )

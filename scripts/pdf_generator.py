@@ -7,7 +7,12 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 
-def generate_pdf(title, df, graph_buffer=None):
+from scripts.graph_generator import (
+    generate_daily_trend_graph,
+    generate_subject_graph
+)
+
+def generate_admin_pdf(overall_df, subject_df, student_df, daily_df):
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)
@@ -16,60 +21,38 @@ def generate_pdf(title, df, graph_buffer=None):
     elements = []
 
     # =========================================
-    # PAGE 1 → SUMMARY + INSIGHTS
+    # PAGE 1 → KPI SUMMARY
     # =========================================
-    elements.append(Paragraph(title, styles["Title"]))
+    elements.append(Paragraph("Admin Attendance Report", styles["Title"]))
     elements.append(Spacer(1, 20))
 
-    total_students = len(df)
-
-    if "attendance_percent" in df.columns:
-        avg_attendance = round(df["attendance_percent"].mean(), 2)
-        defaulters = df[df["attendance_percent"] < 75].shape[0]
-    else:
-        avg_attendance = "N/A"
-        defaulters = "N/A"
-
-    total_classes = (
-        df["total_classes"].sum()
-        if "total_classes" in df.columns
-        else "N/A"
-    )
-
-    elements.append(Paragraph("Summary Insights", styles["Heading2"]))
-    elements.append(Spacer(1, 10))
-
-    insights_data = [
+    kpi_data = [
         ["Metric", "Value"],
-        ["Total Students", total_students],
-        ["Average Attendance (%)", avg_attendance],
-        ["Defaulters (<75%)", defaulters],
-        ["Total Classes Conducted", total_classes],
+        ["Total Students", int(overall_df["total_students"][0])],
+        ["Total Records", int(overall_df["total_records"][0])],
+        ["Total Present", int(overall_df["total_present"][0])],
+        ["Attendance %", f'{overall_df["attendance_percent"][0]} %'],
     ]
 
-    insights_table = Table(insights_data)
-
-    insights_table.setStyle(TableStyle([
+    table = Table(kpi_data)
+    table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ("GRID", (0, 0), (-1, -1), 1, colors.black),
     ]))
 
-    elements.append(insights_table)
-
+    elements.append(table)
     elements.append(PageBreak())
 
     # =========================================
-    # PAGE 2 → FULL TABLE
+    # PAGE 2 → SUBJECT DATA
     # =========================================
-    elements.append(Paragraph("Detailed Attendance Data", styles["Heading2"]))
+    elements.append(Paragraph("Subject Attendance", styles["Heading2"]))
     elements.append(Spacer(1, 10))
 
-    data = [list(df.columns)] + df.values.tolist()
+    subject_data = [list(subject_df.columns)] + subject_df.values.tolist()
 
-    table = Table(data)
-
+    table = Table(subject_data)
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.darkblue),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
@@ -78,18 +61,56 @@ def generate_pdf(title, df, graph_buffer=None):
     ]))
 
     elements.append(table)
+    elements.append(PageBreak())
+
+    # =========================================
+    # PAGE 3 → STUDENT DATA + DEFAULTERS
+    # =========================================
+    elements.append(Paragraph("Student Attendance", styles["Heading2"]))
+    elements.append(Spacer(1, 10))
+
+    student_data = [list(student_df.columns)] + student_df.values.tolist()
+
+    table = Table(student_data)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.darkgreen),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+        ("FONTSIZE", (0, 0), (-1, -1), 7),
+    ]))
+
+    elements.append(table)
+
+    # Defaulters
+    elements.append(Spacer(1, 20))
+    elements.append(Paragraph("Defaulters (<75%)", styles["Heading3"]))
+
+    defaulters = student_df[student_df["attendance_percent"] < 75]
+
+    if not defaulters.empty:
+        def_data = [list(defaulters.columns)] + defaulters.values.tolist()
+        table = Table(def_data)
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.red),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+        ]))
+        elements.append(table)
 
     elements.append(PageBreak())
 
     # =========================================
-    # PAGE 3 → GRAPH
+    # PAGE 4 → GRAPHS
     # =========================================
-    if graph_buffer:
-        elements.append(Paragraph("Attendance Visualization", styles["Heading2"]))
-        elements.append(Spacer(1, 20))
+    elements.append(Paragraph("Attendance Visualizations", styles["Heading2"]))
+    elements.append(Spacer(1, 20))
 
-        img = Image(graph_buffer, width=450, height=250)
-        elements.append(img)
+    graph1 = generate_daily_trend_graph(daily_df)
+    graph2 = generate_subject_graph(subject_df)
+
+    elements.append(Image(graph1, width=450, height=250))
+    elements.append(Spacer(1, 20))
+    elements.append(Image(graph2, width=450, height=250))
 
     doc.build(elements)
 
